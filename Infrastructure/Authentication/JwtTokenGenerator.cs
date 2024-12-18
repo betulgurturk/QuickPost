@@ -15,9 +15,9 @@ namespace Infrastructure.Authentication
 {
     public class JwtTokenGenerator : IJwtTokenGenerator
     {
-        private readonly IOptions<JwtSettings> _jwtSettings;
+        private readonly IOptionsMonitor<JwtSettings> _jwtSettings;
 
-        public JwtTokenGenerator(IOptions<JwtSettings> jwtSettings)
+        public JwtTokenGenerator(IOptionsMonitor<JwtSettings> jwtSettings)
         {
             _jwtSettings = jwtSettings;
         }
@@ -32,16 +32,17 @@ namespace Infrastructure.Authentication
                 new Claim(ClaimTypes.Email, user.Emailaddress),
                 new Claim("UserId", user.Id.ToString())
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Value.SecretKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.CurrentValue.SecretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-               issuer: _jwtSettings.Value.Issuer,
-               audience: _jwtSettings.Value.Audience,
+               issuer: _jwtSettings.CurrentValue.Issuer,
+               audience: _jwtSettings.CurrentValue.Audience,
                claims: claims,
-               expires: DateTime.Now.AddMinutes(_jwtSettings.Value.ExpiryInMinutes),
+               expires: DateTime.Now.AddMinutes(_jwtSettings.CurrentValue.ExpiryInMinutes),
                signingCredentials: creds
            );
+
             return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
         }
     }
