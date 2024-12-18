@@ -21,7 +21,7 @@ namespace Infrastructure.Authentication
             _jwtSettings = jwtSettings;
         }
 
-        public string GenerateToken(User user)
+        public Task<string> GenerateToken(User user)
         {
             var claims = new[]
            {
@@ -41,7 +41,7 @@ namespace Infrastructure.Authentication
                expires: DateTime.Now.AddMinutes(_jwtSettings.ExpiryInMinutes),
                signingCredentials: creds
            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
         }
     }
 }
