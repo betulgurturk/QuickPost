@@ -1,4 +1,5 @@
 ﻿using Application.Users.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace QuickPostApi.Controllers
@@ -14,6 +15,7 @@ namespace QuickPostApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetUserList()
         {
             var users = await Mediator.Send(new GetUserListRequest());
