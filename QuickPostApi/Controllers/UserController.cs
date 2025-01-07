@@ -1,4 +1,5 @@
-﻿using Application.Users.Queries;
+﻿using Application.Users.Commands;
+using Application.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,11 +8,11 @@ namespace QuickPostApi.Controllers
     /// <summary>
     /// User Controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class UserController : BaseController
     {
         /// <summary>
-        /// Gets user list
+        /// User listesini getirir
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -20,6 +21,18 @@ namespace QuickPostApi.Controllers
         {
             var users = await Mediator.Send(new GetUserListRequest());
             return Ok(users);
+        }
+
+        /// <summary>
+        /// User kaydetme işlemi
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> SaveUser(SaveUserCommand command)
+        {
+            var result = await Mediator.Send(command);
+            return Ok(result);
         }
     }
 }

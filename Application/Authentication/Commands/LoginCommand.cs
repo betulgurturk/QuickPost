@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Models;
 using MediatR;
+using QuickPost.Domain.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,13 +27,10 @@ namespace Application.Authentication.Commands
 
         public async Task<string> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Username == request.model.UserName && x.Password == request.model.Password);
-            if (user == null)
-            {
+            var user = _context.Users.FirstOrDefault(x => x.Username == request.model.UserName);
+            if (user is null || !PasswordHelper.VerifyPassword(request.model.Password, user.Password))
                 throw new Exception("Invalid username or password");
-            }
             return await _jwtTokenGenerator.GenerateToken(user);
-            //TODO: Result yapısı oluşturulacak.
         }
     }
 }

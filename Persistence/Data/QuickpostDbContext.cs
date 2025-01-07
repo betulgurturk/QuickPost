@@ -23,6 +23,11 @@ namespace Persistence.Data
 
         public virtual DbSet<User> Users { get; set; }
 
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(QuickpostdbContext).Assembly);

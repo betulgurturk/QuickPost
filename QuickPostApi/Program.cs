@@ -43,6 +43,8 @@ builder.Services.AddSwaggerGen(c =>
             new string[] {}
         }
     });
+     var filePath = Path.Combine(System.AppContext.BaseDirectory, "QuickPostApi.xml");
+     c.IncludeXmlComments(filePath);
 });
 
 
