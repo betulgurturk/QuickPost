@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using QuickPost.Application.Behaviors;
+using QuickPost.Application.Behaviors.Validation;
 using System.Reflection;
 using FluentValidation;
 

@@ -1,7 +1,7 @@
 using FluentValidation;
 using MediatR;
 
-namespace QuickPost.Application.Behaviors;
+namespace QuickPost.Application.Behaviors.Validation;
 
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
