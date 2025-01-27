@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DBGenerator.Models;
+namespace Domain.Models;
 
 public partial class Post
 {
@@ -19,5 +19,6 @@ public partial class Post
 
     public DateTime Modifieddate { get; set; }
 
+    public bool IsDeleted { get; set; }
     public virtual User User { get; set; } = null!;
 }

@@ -1,11 +1,6 @@
-﻿using DBGenerator.Models;
+﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Configurations
 {
@@ -38,11 +33,14 @@ namespace Persistence.Configurations
             entity.Property(e => e.Viewcount)
                 .HasDefaultValue(0)
                 .HasColumnName("viewcount");
-
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValue(false)
+                .HasColumnName("isdeleted");
             entity.HasOne(d => d.User).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.Userid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("posts_userid_fkey");
+            entity.HasQueryFilter(e => !e.IsDeleted);
         }
     }
 }

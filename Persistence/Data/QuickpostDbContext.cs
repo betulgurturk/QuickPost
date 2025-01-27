@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using DBGenerator.Models;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Data
@@ -23,7 +23,7 @@ namespace Persistence.Data
 
         public virtual DbSet<User> Users { get; set; }
 
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             return await base.SaveChangesAsync(cancellationToken);
         }
@@ -36,6 +36,6 @@ namespace Persistence.Data
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
-       
+
     }
 }

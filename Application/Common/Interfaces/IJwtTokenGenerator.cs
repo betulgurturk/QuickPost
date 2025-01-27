@@ -1,4 +1,4 @@
-﻿using DBGenerator.Models;
+﻿using Domain.Models;
 
 namespace Application.Common.Interfaces
 {

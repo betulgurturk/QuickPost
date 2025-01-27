@@ -1,26 +1,17 @@
 ﻿using Application.Common.Interfaces;
-using DBGenerator.Models;
+using Domain.Models;
 using Infrastructure.Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Authentication
 {
-    public class JwtTokenGenerator : IJwtTokenGenerator
+    public class JwtTokenGenerator(IOptionsMonitor<JwtSettings> jwtSettings) : IJwtTokenGenerator
     {
-        private readonly IOptionsMonitor<JwtSettings> _jwtSettings;
-
-        public JwtTokenGenerator(IOptionsMonitor<JwtSettings> jwtSettings)
-        {
-            _jwtSettings = jwtSettings;
-        }
+        private readonly IOptionsMonitor<JwtSettings> _jwtSettings = jwtSettings;
 
         public Task<string> GenerateToken(User user)
         {

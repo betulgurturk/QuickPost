@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
-using DBGenerator.Models;
 using Domain.Helpers;
+using Domain.Models;
 using MediatR;
 using QuickPost.Domain.Helpers;
 
@@ -10,18 +10,15 @@ namespace Application.Users.Commands
     {
         public required string UserName { get; set; }
         public required string Password { get; set; }
-        public string Email { get; set; }
+        public required string Email { get; set; }
         public string? Firstname { get; set; }
         public string? Lastname { get; set; }
     }
 
-    public class SaveUserCommandHandler : IRequestHandler<SaveUserCommand, Result>
+    public class SaveUserCommandHandler(IQuickpostDbContext context) : IRequestHandler<SaveUserCommand, Result>
     {
-        private readonly IQuickpostDbContext _context;
-        public SaveUserCommandHandler(IQuickpostDbContext context)
-        {
-            _context = context;
-        }
+        private readonly IQuickpostDbContext _context = context;
+
         public async Task<Result> Handle(SaveUserCommand request, CancellationToken cancellationToken)
         {
             try

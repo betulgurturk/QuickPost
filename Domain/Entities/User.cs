@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DBGenerator.Models;
+namespace Domain.Models;
 
 public partial class User
 {

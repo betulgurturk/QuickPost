@@ -4,11 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace QuickPostApi.Controllers
 {
+    /// <summary>
+    /// Authentication controller
+    /// </summary>
     [Route("api/[controller]")]
     public class AuthenticationController : BaseController
     {
         /// <summary>
-        /// Authentication işlemleri
+        /// Authentication process
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>

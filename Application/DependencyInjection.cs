@@ -16,6 +16,7 @@ namespace Application
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+
             return services;
         }
     }

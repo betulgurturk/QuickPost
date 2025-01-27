@@ -1,7 +1,10 @@
 using Application;
+using Application.Common.Interfaces;
 using Infrastructure;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using QuickPostApi.Configurations;
+using QuickPostApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +14,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplicationServices();
-builder.Services.AddPersistenceServices(builder.Configuration);
-
+builder.Services.AddServices(builder.Configuration);
 builder.Services.AddSwaggerGen(c =>
 {
     // Security Definition
