@@ -22,22 +22,51 @@ namespace Application.Likes.Commands
                 var post = await _context.Posts.FirstOrDefaultAsync(x => x.Id == request.PostId, cancellationToken);
                 if (post == null)
                     return new Result(false, "post not found");
-                if (await _context.Likes.AnyAsync(x => x.Postid == request.PostId && x.Userid == _userService.Id, cancellationToken))
-                    return new Result(false, "you have already liked this post");
-                var like = new Like
+
+                using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
                 {
-                    Postid = request.PostId,
-                    Userid = _userService.Id
-                };
-                await _context.Likes.AddAsync(like, cancellationToken);
-                post.Likecount++;
-                await _context.SaveChangesAsync(cancellationToken);
-                return new Result(true, "post liked successfully");
+                    try
+                    {
+                        var isLike = LikeStatus.Unliked.ToString();
+                        var like = await _context.Likes.FirstOrDefaultAsync(x => x.Postid == request.PostId && x.Userid == _userService.Id, cancellationToken);
+                        if (like != null)
+                        {
+                            //if not null remove the like 
+                            _context.Likes.Remove(like);
+                            post.Likecount--;
+                        }
+                        else
+                        {
+                            like = new Like
+                            {
+                                Postid = request.PostId,
+                                Userid = _userService.Id
+                            };
+                            await _context.Likes.AddAsync(like, cancellationToken);
+                            post.Likecount++;
+                            isLike = LikeStatus.Liked.ToString();
+                        }
+                        await _context.SaveChangesAsync(cancellationToken);
+                        await transaction.CommitAsync(cancellationToken);
+                        return new Result(true, $"post {isLike} successfully");
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync(cancellationToken);
+                        return new Result(false, "an error occured on saving process");
+                    }
+                }
             }
             catch (Exception)
             {
                 return new Result(false, "an error occured");
             }
         }
+    }
+
+    public enum LikeStatus
+    {
+        Liked,
+        Unliked
     }
 }

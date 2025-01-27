@@ -1,4 +1,5 @@
-﻿using Application.Posts.Commands;
+﻿using Application.Likes.Commands;
+using Application.Posts.Commands;
 using Application.Posts.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +55,18 @@ namespace QuickPostApi.Controllers
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> DeletePost(DeletePostCommand command)
+        {
+            return Ok(await Mediator.Send(command));
+        }
+
+        /// <summary>
+        /// Like a post
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> LikePost(LikePostCommand command)
         {
             return Ok(await Mediator.Send(command));
         }
