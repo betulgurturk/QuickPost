@@ -22,4 +22,7 @@ public partial class User
     public DateTime Modifieddate { get; set; }
 
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
+    public virtual ICollection<Follower> FollowerFollowingusers { get; set; } = new List<Follower>();
+
+    public virtual ICollection<Follower> FollowerUsers { get; set; } = new List<Follower>();
 }

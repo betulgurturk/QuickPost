@@ -24,7 +24,7 @@ namespace Application.Users.Queries
 
         public async Task<List<UserDto>> Handle(GetUserListRequest request, CancellationToken cancellationToken)
         {
-            return await _context.Users.AsNoTracking().Select(x => new UserDto { Username = x.Username }).ToListAsync(cancellationToken);
+            return await _context.Users.AsNoTracking().Select(x => new UserDto { Username = x.Username, Id = x.Id }).ToListAsync(cancellationToken);
         }
     }
 
@@ -32,5 +32,6 @@ namespace Application.Users.Queries
     public class UserDto
     {
         public required string Username { get; set; }
+        public Guid Id { get; set; }
     }
 }

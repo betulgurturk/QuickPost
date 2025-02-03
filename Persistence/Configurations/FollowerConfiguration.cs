@@ -23,6 +23,16 @@ namespace Persistence.Configurations
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("modifieddate");
             entity.Property(e => e.Userid).HasColumnName("userid");
+
+            entity.HasOne(d => d.Followinguser).WithMany(p => p.FollowerFollowingusers)
+                .HasForeignKey(d => d.Followinguserid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_flwuserid");
+
+            entity.HasOne(d => d.User).WithMany(p => p.FollowerUsers)
+                .HasForeignKey(d => d.Userid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_userid");
         }
     }
 }
