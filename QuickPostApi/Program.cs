@@ -1,69 +1,93 @@
-using Application;
-using Application.Common.Interfaces;
-using Infrastructure;
 using Microsoft.OpenApi.Models;
-using Persistence;
 using QuickPostApi.Configurations;
-using QuickPostApi.Services;
+using NLog;
+using NLog.Web;
+using QuickPostApi.Middlewares;
 
-var builder = WebApplication.CreateBuilder(args);
+var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddServices(builder.Configuration);
-builder.Services.AddSwaggerGen(c =>
+try
 {
-    // Security Definition
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'"
-    });
+    logger.Debug("init main");
 
-    // Security Requirement
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    var builder = WebApplication.CreateBuilder(args);
+
+
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
+
+
+
+    builder.Services.AddControllers();
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+    builder.Services.AddServices(builder.Configuration);
+    builder.Services.AddSwaggerGen(c =>
     {
+        // Security Definition
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'"
+        });
+
+        // Security Requirement
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
+            }
+        });
+        var filePath = Path.Combine(System.AppContext.BaseDirectory, "QuickPostApi.xml");
+        c.IncludeXmlComments(filePath);
     });
-     var filePath = Path.Combine(System.AppContext.BaseDirectory, "QuickPostApi.xml");
-     c.IncludeXmlComments(filePath);
-});
 
 
-var app = builder.Build();
+    var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
 
-    app.UseSwaggerUI();
+    app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception exception)
+{
+    //NLog: catch setup errors
+    logger.Error(exception, "Stopped program because of exception");
+    throw;
+}
+finally
+{
+    // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+    NLog.LogManager.Shutdown();
+}
