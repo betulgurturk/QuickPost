@@ -3,6 +3,7 @@ using Application.Posts.Commands;
 using Application.Posts.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenTelemetry.Trace;
 
 namespace QuickPostApi.Controllers
 {
@@ -13,6 +14,13 @@ namespace QuickPostApi.Controllers
     [Route("api/[controller]/[action]")]
     public class PostController : BaseController
     {
+
+        private readonly Tracer _tracer;
+        public PostController(TracerProvider tracerProvider)
+        {
+            _tracer = tracerProvider.GetTracer("MainTracer");
+        }
+
         /// <summary>
         /// Get all posts for current user
         /// </summary>
@@ -21,6 +29,7 @@ namespace QuickPostApi.Controllers
         [Authorize]
         public async Task<IActionResult> GetCurrentUserPosts()
         {
+            using var span = _tracer.StartActiveSpan("GetCurrentUserPosts");
             return Ok(await Mediator.Send(new GetPostsByCurrentUserQuery()));
         }
 

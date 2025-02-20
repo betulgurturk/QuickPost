@@ -1,4 +1,5 @@
-﻿namespace QuickPostApi.Middlewares
+﻿
+namespace QuickPostApi.Middlewares
 {
     /// <summary>
     /// Global exception handler middleware
@@ -30,6 +31,7 @@
             catch (Exception ex)
             {
                 _logger.Log(LogLevel.Error, ex, ex.Message);
+                throw;
             }
         }
     }

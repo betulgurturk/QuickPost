@@ -1,6 +1,8 @@
 ﻿using Application.Authentication.Commands;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using OpenTelemetry.Trace;
+
 
 namespace QuickPostApi.Controllers
 {
@@ -11,12 +13,17 @@ namespace QuickPostApi.Controllers
     public class AuthenticationController : BaseController
     {
         private readonly ILogger<AuthenticationController> _logger;
+        private readonly Tracer _tracer;
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="logger"></param>
-        public AuthenticationController(ILogger<AuthenticationController> logger) => _logger = logger;
+        public AuthenticationController(ILogger<AuthenticationController> logger, TracerProvider tracerProvider)
+        {
+            _logger = logger;
+            _tracer = tracerProvider.GetTracer("MainTracer");
+        }
 
         /// <summary>
         /// Authentication process
@@ -26,6 +33,7 @@ namespace QuickPostApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Authenticate(LoginModel model)
         {
+            using var span = _tracer.StartActiveSpan("PresentationLayer.Authenticate");
             return Ok(await Mediator.Send(new LoginCommand { model = model }));
         }
     }

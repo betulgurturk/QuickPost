@@ -1,20 +1,27 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Models;
 using Infrastructure.Configurations;
+using MediatR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Trace;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace Infrastructure.Authentication
 {
-    public class JwtTokenGenerator(IOptionsMonitor<JwtSettings> jwtSettings) : IJwtTokenGenerator
+    public class JwtTokenGenerator(IOptionsMonitor<JwtSettings> jwtSettings, TracerProvider tracerProvider) : IJwtTokenGenerator
     {
         private readonly IOptionsMonitor<JwtSettings> _jwtSettings = jwtSettings;
+        private readonly Tracer _tracer = tracerProvider.GetTracer("MainTracer");
 
         public Task<string> GenerateToken(User user)
         {
+            using var span = _tracer.StartActiveSpan("JwtTokenGenerator");
+
+            span.AddEvent("Token oluşturma başladı");
+
             var claims = new[]
            {
                 new Claim(ClaimTypes.Name, user.Firstname ?? string.Empty),
@@ -32,7 +39,9 @@ namespace Infrastructure.Authentication
                claims: claims,
                expires: DateTime.Now.AddMinutes(_jwtSettings.CurrentValue.ExpiryInMinutes),
                signingCredentials: creds
-           );
+            );
+
+            span.AddEvent("Token başarıyla oluşturuldu");
 
             return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
         }

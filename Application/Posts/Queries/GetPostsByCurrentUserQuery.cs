@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Trace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,16 @@ namespace Application.Posts.Queries
     public class GetPostsByCurrentUserQuery : IRequest<IQueryable<GetPostsByUserDto>>
     {
     }
-    public class GetPostsByUserQueryHandler(IQuickpostDbContext context, IUserService userService) : IRequestHandler<GetPostsByCurrentUserQuery, IQueryable<GetPostsByUserDto>>
+    public class GetPostsByUserQueryHandler(IQuickpostDbContext context, IUserService userService, TracerProvider tracerProvider) : IRequestHandler<GetPostsByCurrentUserQuery, IQueryable<GetPostsByUserDto>>
     {
         private readonly IQuickpostDbContext _context = context;
         private readonly IUserService _userService = userService;
+        private readonly Tracer _tracer = tracerProvider.GetTracer("MainTracer");
 
         public Task<IQueryable<GetPostsByUserDto>> Handle(GetPostsByCurrentUserQuery request, CancellationToken cancellationToken)
         {
+
+            using var span = _tracer.StartActiveSpan("GetPostsByCurrentUserQuery");
             return Task.FromResult(_context.Posts.AsNoTracking().Where(x => x.Userid == _userService.Id).Select(x => new GetPostsByUserDto
             {
                 Content = x.Content,
