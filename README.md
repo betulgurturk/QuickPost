@@ -51,6 +51,30 @@ docker build -t quickpostapi .
 
 docker run -d -p 5000:80 quickpostapi
 
+## Using Docker Compose
+
+To run the application along with Prometheus and Grafana for monitoring, use Docker Compose:
+
+1. Ensure Docker and Docker Compose are installed on your machine.
+
+2. Build and start the services:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+3. Access the services:
+
+   - **QuickPostApi**: `http://localhost:8080`
+   - **Prometheus**: `http://localhost:9090`
+   - **Grafana**: `http://localhost:3000` (Default credentials: `admin` / `admin`)
+
+4. Configure Grafana to use Prometheus as a data source to visualize metrics.
+
+### Configuration
+
+- **Prometheus**: The configuration file is located at `prometheus/prometheus.yml`.
+- **Grafana**: Data is persisted in the `grafana-data` volume.
 
 ## Configuration
 
@@ -78,4 +102,6 @@ Swagger is used for API documentation. Once the application is running, you can 
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
+
+
 
