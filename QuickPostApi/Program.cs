@@ -3,9 +3,7 @@ using QuickPostApi.Configurations;
 using NLog;
 using NLog.Web;
 using QuickPostApi.Middlewares;
-using OpenTelemetry.Trace;
-using OpenTelemetry.Resources;
-
+using Prometheus;
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
 try
@@ -18,7 +16,7 @@ try
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 
-    
+
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -63,6 +61,8 @@ try
 
     app.UseMiddleware<ExceptionHandlerMiddleware>();
 
+    app.UseMetricServer();
+    app.UseHttpMetrics();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
