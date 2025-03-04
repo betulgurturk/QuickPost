@@ -76,6 +76,10 @@ To run the application along with Prometheus and Grafana for monitoring, use Doc
 - **Prometheus**: The configuration file is located at `prometheus/prometheus.yml`.
 - **Grafana**: Data is persisted in the `grafana-data` volume.
 
+## Redis
+
+- docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 -e REDIS_ARGS="--requirepass 123456" redis/redis-stack:latest
+
 ## Configuration
 
 The application can be configured using the `appsettings.json` file. Ensure to set up the necessary configurations for logging, authentication, and other services.
