@@ -29,12 +29,12 @@ namespace QuickPostApi.Controllers
         /// Get all posts for current user
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Authorize]
-        public async Task<IActionResult> GetCurrentUserPosts()
+        public async Task<IActionResult> GetCurrentUserPosts(GetPostsByCurrentUserQuery model)
         {
             using var span = _tracer.StartActiveSpan("GetCurrentUserPosts");
-            return Ok(await Mediator.Send(new GetPostsByCurrentUserQuery()));
+            return Ok(await Mediator.Send(model));
         }
 
         /// <summary>
