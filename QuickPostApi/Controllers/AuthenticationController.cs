@@ -19,6 +19,7 @@ namespace QuickPostApi.Controllers
         /// Ctor
         /// </summary>
         /// <param name="logger"></param>
+        /// <param name="tracerProvider"></param>
         public AuthenticationController(ILogger<AuthenticationController> logger, TracerProvider tracerProvider)
         {
             _logger = logger;

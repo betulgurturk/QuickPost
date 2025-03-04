@@ -16,6 +16,10 @@ namespace QuickPostApi.Controllers
     {
 
         private readonly Tracer _tracer;
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="tracerProvider"></param>
         public PostController(TracerProvider tracerProvider)
         {
             _tracer = tracerProvider.GetTracer("MainTracer");
