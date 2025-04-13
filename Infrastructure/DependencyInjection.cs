@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using RabbitMQ.Client;
 using Redis.OM;
 using StackExchange.Redis;
 using System.Text;
@@ -46,7 +47,7 @@ public static class DependencyInjection
             {
                 EndPoints = { redisConnectionString },
                 AbortOnConnectFail = false,
-                Password="123456",
+                Password = "123456",
                 ConnectTimeout = 1000,
                 AsyncTimeout = 1000,
                 SyncTimeout = 1000,
@@ -55,6 +56,14 @@ public static class DependencyInjection
             services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
             services.AddSingleton<ICacheService, RedisCacheService>();
         }
+
+        services.AddSingleton<IConnectionFactory>(new ConnectionFactory { HostName = "localhost", UserName = "admin", Password = "admin" });
+
+        services.AddSingleton<IQueueService, RabbitMQService>();
+
+        services.AddSingleton<IMessageConsumer, RabbitMQConsumerService>();
+
+
 
     }
 }

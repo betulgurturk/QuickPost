@@ -4,6 +4,7 @@ using NLog;
 using NLog.Web;
 using QuickPostApi.Middlewares;
 using Prometheus;
+using QuickPostApi.Services;
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
 try
@@ -55,6 +56,8 @@ try
         c.IncludeXmlComments(filePath);
     });
 
+
+    builder.Services.AddHostedService<BackgroundServices>();
 
     var app = builder.Build();
 

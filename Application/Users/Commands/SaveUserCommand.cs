@@ -15,9 +15,11 @@ namespace Application.Users.Commands
         public string? Lastname { get; set; }
     }
 
-    public class SaveUserCommandHandler(IQuickpostDbContext context) : IRequestHandler<SaveUserCommand, Result>
+    public class SaveUserCommandHandler(IQuickpostDbContext context, IQueueService queueService) : IRequestHandler<SaveUserCommand, Result>
     {
         private readonly IQuickpostDbContext _context = context;
+        private readonly IQueueService _queueService = queueService;
+       
 
         public async Task<Result> Handle(SaveUserCommand request, CancellationToken cancellationToken)
         {
@@ -36,6 +38,10 @@ namespace Application.Users.Commands
                 };
                 await _context.Users.AddAsync(user, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
+
+                //send data to queue
+                await _queueService.Send(user.Id, "Selamlar");
+
                 return new Result(true, "User saved successfully");
             }
             catch (Exception ex)

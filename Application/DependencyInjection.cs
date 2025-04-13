@@ -5,6 +5,7 @@ using System.Reflection;
 using FluentValidation;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Application.Common.Interfaces;
 
 namespace Application
 {
